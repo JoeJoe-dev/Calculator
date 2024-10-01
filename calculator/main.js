@@ -115,18 +115,30 @@ function ValidateInput (value) {
 
 
 function prepareInput(input) {
-    // Replace percentages with their decimal equivalent
-    let preparedInput = input.replace(/%/g, "/100");
-
-    // Split the input into individual tokens
-    let tokens = preparedInput.match(/(\d+\.\d+|\d+|\S)/g) || [];
-
-    // Process each token to remove leading zeros in numbers
-    for (let i = 0; i < tokens.length; i++) {
-        if (!isNaN(tokens[i]) && tokens[i][0] === '0' && tokens[i].length > 1 && tokens[i][1] !== '.') {
-            tokens[i] = tokens[i].replace(/^0+/, '');
-        }
-    }
-
-    return tokens.join('');
-}
+	// Replace percentages with their decimal equivalent
+	let preparedInput = input.replace(/%/g, "/100");
+  
+	// Insert a multiplication operator between numbers and parentheses
+	preparedInput = preparedInput.replace(/(\d)(\()/g, "$1*(");
+	
+	// Also insert multiplication for closing parentheses followed by a number
+	preparedInput = preparedInput.replace(/(\))(\d)/g, "$1*$2");
+  
+	// Split the input into individual tokens
+	let tokens = preparedInput.match(/(\d+\.\d+|\d+|\S)/g) || [];
+  
+	// Process each token to remove leading zeros in numbers
+	for (let i = 0; i < tokens.length; i++) {
+	  if (
+		!isNaN(tokens[i]) &&
+		tokens[i][0] === "0" &&
+		tokens[i].length > 1 &&
+		tokens[i][1] !== "."
+	  ) {
+		tokens[i] = tokens[i].replace(/^0+/, "");
+	  }
+	}
+  
+	return tokens.join("");
+  }
+  
